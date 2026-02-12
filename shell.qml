@@ -357,7 +357,7 @@ FreezeScreen {
                         text: {
                             const icons = {
                                 "region": "󰒉",
-                                "window": "",
+                                "window": "󱂬",
                                 "temp": "󰅇",
                                 "edit": "󰏫"
                             };
