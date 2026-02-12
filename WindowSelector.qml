@@ -10,8 +10,13 @@ Item {
 
     signal checkHover(real mouseX, real mouseY)
     signal regionSelected(real x, real y, real width, real height)  
+    property alias pressed: mouseArea.pressed
+
+    property real mouseX: 0
+    property real mouseY: 0
+    onMouseXChanged: checkHover(mouseX, mouseY)
+    onMouseYChanged: checkHover(mouseX, mouseY)
       
-    // Shader customization properties  
     property real dimOpacity: 0.6  
     property real borderRadius: 10.0  
     property real outlineThickness: 2.0  
@@ -28,7 +33,7 @@ Item {
     Behavior on selectionHeight { SpringAnimation { spring: 4; damping: 0.4 } }  
     Behavior on selectionWidth { SpringAnimation { spring: 4; damping: 0.4 } }  
       
-    // Shader overlay  
+
     ShaderEffect {  
         anchors.fill: parent  
         z: 0  
@@ -57,9 +62,14 @@ Item {
                 target: root
 
                 function onCheckHover(mouseX, mouseY) {
+                    // Retrieve window geometry from Hyprland IPC object
+                    if (!root.monitor || !root.monitor.lastIpcObject || !modelData.lastIpcObject)
+                        return;
+
                     const monitorX = root.monitor.lastIpcObject.x
                     const monitorY = root.monitor.lastIpcObject.y
                     
+                    // Offset global coordinates by monitor position
                     const windowX = modelData.lastIpcObject.at[0] - monitorX
                     const windowY = modelData.lastIpcObject.at[1] - monitorY
                     
