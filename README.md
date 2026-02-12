@@ -1,7 +1,7 @@
 # HyprQuickFrame
 
-A polished, native screenshot utility for Hyprland built with **Quickshell**.
-Features a modern overlay UI with shader-based dimming, smooth spring animations, and intelligent window snapping.
+A polished, native screenshot utility for Hyprland built with **Quickshell**. 
+Features a modern overlay UI with shader-based dimming, "juicy" bouncy animations, and intelligent window snapping.
 
 ![License](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Wayland](https://img.shields.io/badge/Wayland-Native-green.svg)
@@ -11,53 +11,56 @@ Features a modern overlay UI with shader-based dimming, smooth spring animations
 
 ## ✨ Features
 
-*   **3 Capture Modes:**
-    *   **Region:** Freehand selection with alignment guides.
-    *   **Window:** Automatically snaps to open Hyprland windows.
-    *   **Screen:** Instant full-screen capture.
-*   **Modern UI:**
-    *   Floating "Pill" control bar to switch modes.
-    *   **Animations:** Smooth spring animations for selection resizing.
-    *   **Visuals:** Fragment shader for smooth dimming and rounded corners.
-*   **Smart Saving:**
-    *   **Quick Save:** Automatically saves to `Pictures/Screenshots` and copies to clipboard.
-    *   **Notifications:** System notification with preview upon save.
-    *   **Editor Mode:** Opens the screenshot in **Satty** for annotation (Optional).
+*   **Three Modes**:
+    *   **Region**: Drag to select an area. **Left-click** automatically captures the full screen, and **Right-click** resets your selection.
+    *   **Window**: Hovering over a window highlights it—click to capture.
+    *   **Temp**: A "clipboard-only" mode. Great for quick sharing when you don't want to clutter your disk.
+*   **KDE Connect**: Push screenshots (and your clipboard) directly to your phone.
+*   **Feels Good**: The UI uses spring animations (`damping: 0.25`) so it feels responsive and playful, not static.
+*   **Fast**: It launches instantly. No waiting.
+*   **Editor Support**: If you have `satty` installed, you can annotate right after capturing.
 
 ## 🎥 Demo
 
 <details>
-<summary>Click to watch the demo</summary>
-<video src="https://github.com/user-attachments/assets/1c15ba34-3571-4f62-8dc2-4d1997ce41e2" controls="controls"> </video>
-<video src="https://github.com/user-attachments/assets/904066a7-3a67-4795-8353-0461219386a7" controls="controls"> </video>
+  <summary>Click to watch the demo</summary>
+
+  <video controls>
+    <source src="VIDEO_URL_HERE.mp4" type="video/mp4">
+  </video>
+
 </details>
+
+## ⌨️ Shortcuts
+
+*   `r`: Region Mode
+*   `w`: Window Mode
+*   `s`: Full Screen Capture
+*   `t`: Toggle Temp Mode
+*   `k`: Toggle KDE Share
+*   `Escape`: Quit
 
 ## 📦 Requirements
 
-1.  **[Quickshell](https://github.com/outfoxxed/quickshell)** (The shell environment)
+1.  **[Quickshell](https://github.com/outfoxxed/quickshell)** (0.2.1+)
 2.  `grim` (Screen capture)
 3.  `imagemagick` (Image processing)
 4.  `wl-clipboard` (Clipboard support)
-5.  `libnotify` (Desktop notifications)
 5.  `satty` (Optional: for Editor Mode)
+6.  `kdeconnect` (Optional: for Share Mode)
+7.  `libnotify` (For notifications)
 
 ## 🚀 Installation
 
-### Arch Linux (AUR)
-You can install `hyprquickframe-git` (maintained by [@knownasnaffy](https://github.com/knownasnaffy)):
-
-```bash
-yay -S hyprquickframe-git
-```
-
 ### 1. Install System Dependencies
+**Arch Linux:**
 ```bash
 sudo pacman -S grim imagemagick wl-clipboard satty libnotify
 ```
 
 ### 2. Install Quickshell
 ```bash
-yay -S quickshell
+yay -S quickshell-git
 ```
 
 ### 3. Clone Repository
@@ -66,7 +69,6 @@ git clone https://github.com/Ronin-CK/HyprQuickFrame ~/.config/quickshell/HyprQu
 ```
 
 ### 4. Basic Test
-Run this in your terminal to verify installation:
 ```bash
 quickshell -c HyprQuickFrame -n
 ```
@@ -91,30 +93,13 @@ Then add to your packages:
 environment.systemPackages = [ inputs.HyprQuickFrame.packages.${pkgs.system}.default ];
 ```
 
-**Using Overlay:**
-```nix
-nixpkgs = {
-  overlays = [
-    inputs.HyprQuickFrame.overlays.default
-  ];
-};
-```
-Then install via `pkgs.hyprquickframe`.
-
-
 ## ⚙️ Configuration (Hyprland)
 
-Add the following keybindings to your `hyprland.conf`:
+Add the following keybinding to your `hyprland.conf`:
 
 ```ini
-# 1. Standard Screenshot (Quick Save)
-# Saves directly to ~/Pictures/Screenshots and copies to clipboard
+# Opens HyprQuickFrame - Decided on-the-fly whether to Edit, Save, or Copy
 bind = SUPER SHIFT, S, exec, quickshell -c HyprQuickFrame -n
-
-# 2. Editor Mode (Annotation)
-# Opens the screenshot in Satty for editing before saving
-# Requires: satty
-bind = SUPER CTRL SHIFT, S, exec, HYPRQUICKFRAME_EDITOR=1 quickshell -c HyprQuickFrame -n
 ```
 
 ## ⚖️ License & Attribution
