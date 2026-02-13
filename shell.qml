@@ -23,6 +23,53 @@ FreezeScreen {
     readonly property real controlHeight: 50
     readonly property real targetMenuWidth: (modes.length - (editActive ? 1 : 0) - (tempActive ? 1 : 0)) * tabItemSize + 8
 
+    function parseTOML(text) {
+        let result = {
+        };
+        let section = "";
+        const lines = text.split(/\r?\n/);
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if (!line || line.startsWith("#"))
+                continue;
+
+            // Section header
+            const secMatch = line.match(/^\[(\w+)\]$/);
+            if (secMatch) {
+                section = secMatch[1];
+                continue;
+            }
+            // Quoted string value
+            const quotedMatch = line.match(/^(\w+)\s*=\s*"([^"]*)"/);
+            if (quotedMatch) {
+                const rawKey = quotedMatch[1];
+                const key = section ? section + rawKey.charAt(0).toUpperCase() + rawKey.slice(1) : rawKey;
+                result[key] = quotedMatch[2];
+                continue;
+            }
+            // Unquoted value
+            const unquotedMatch = line.match(/^(\w+)\s*=\s*([^\s#]+)/);
+            if (unquotedMatch) {
+                const rawKey = unquotedMatch[1];
+                const key = section ? section + rawKey.charAt(0).toUpperCase() + rawKey.slice(1) : rawKey;
+                let val = unquotedMatch[2];
+                if (val === "true") {
+                    val = true;
+                } else if (val === "false") {
+                    val = false;
+                } else {
+                    const num = parseFloat(val);
+                    if (!isNaN(num))
+                        val = num;
+
+                }
+                result[key] = val;
+                continue;
+            }
+        }
+        return result;
+    }
+
     function shellEscape(s) {
         return "'" + s.replace(/'/g, "'\\''") + "'";
     }
@@ -105,13 +152,13 @@ FreezeScreen {
     FileView {
         id: themeFile
 
-        path: Quickshell.shellDir + "/theme.jsonc"
+        path: Quickshell.shellDir.toString().replace(/^file:\/\//, "") + "/theme.toml"
         onTextChanged: {
             try {
-                const cleanJson = text.replace(/\/\/.*|\/\*[\s\S]*?\*\//g, "");
-                theme.source = JSON.parse(cleanJson);
+                let rawText = (typeof text === 'function') ? text() : text;
+                theme.source = root.parseTOML(rawText);
             } catch (e) {
-                console.warn("Failed to parse theme.jsonc:", e);
+                console.warn("Failed to parse theme.toml:", e);
             }
         }
     }
